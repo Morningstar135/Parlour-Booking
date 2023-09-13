@@ -1,0 +1,21 @@
+const express = require('express')
+const path = require('path')
+const cookieParser=require('cookie-parser')
+const dotenv = require('dotenv')
+const connectDb = require('./config/database')
+const loginRoute = require('./routes/loginRoute')
+const bookingRoute = require('./routes/bookingRoute')
+dotenv.config({path:path.join(__dirname,"config","config.env")})
+connectDb()
+const app = express()
+app.use(express.json())
+app.use(cookieParser())
+app.use('/api/user',loginRoute)
+app.use('/api/user/book',bookingRoute)
+app.use("*",(req,res)=>{
+    res.status(404).json({
+        message:'You Reached a wrong URL'
+    })
+})
+app.listen(process.env.PORT, () => console.log(`Server listening on port ${process.env.PORT}!`))
+console.log(Date.now())
