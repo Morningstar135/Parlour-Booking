@@ -21,9 +21,9 @@ let bookingSchema= new mongoose.Schema({
         type:String,
         required:true
     },
-    dateAndTime:{
+    time:{
         type:String,
-        required:true
+        required:true 
     },
     isBooked:{
         type:Boolean,

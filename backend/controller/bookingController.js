@@ -1,15 +1,12 @@
 const Booking= require("../model/bookingModel")
 const jwt = require('jsonwebtoken')
-const {checkAvailability, bookedTimings, formatDate, generateTimeSlots}=require('../utils/functions')
-const { sendMessage } = require("../utils/sendMessage")
+const {checkAvailability, bookedTimings, timeArray, showRemainingTime}=require('../utils/functions')
 
 
 exports.NewBooking=async(req,res)=>{
    
     try{
     const {name,phoneNumber,date,time,hairStylist} =req.body
-    const dateAndTime = dateString(time,date)
-    console.log(dateAndTime);
     const booked =await Booking.create({
         name,
         phoneNumber,
@@ -56,21 +53,32 @@ exports.allBookings=async(req,res)=>{
         console.error(err);
     }
 }
-exports.findDateAndTime=async(req,res)=>{
+exports.remainingTime=async(req,res)=>{
     try{
         const {bookingToken} = req.cookies
+        
     if(!bookingToken){
         res.status(401).json({
             message:"You Dont havce a booking token"
         })
         return
     }
+    try{
     const decoded =await jwt.verify(bookingToken,process.env.JWT_SECRET)
-    const booking=await Booking.findById(decoded.id)
-    const dateAndTime = booking.dateAndTime
+    var booking=await Booking.findById(decoded.id)
+    }catch(err){
+        res.status(401).json({
+            message:"Sorry Some Error Occured Your Booking Token Must Have Expired"
+        })
+        return
+    }
+    const date = booking.date
+    const time =booking.time
+    const phoneNumber = booking.phoneNumber
+    const remainingTimeString=showRemainingTime(date,time,phoneNumber)
     res.status(200).json({
         message:'success',
-        dateAndTime
+        remainingTimeString
     })
 
     }catch(err){
@@ -83,12 +91,9 @@ exports.findDateAndTime=async(req,res)=>{
 exports.availableTimes=async(req,res,next)=>{
 try{
     const {date,hairStylist} =req.body
-    const array=formatDate(date)
-    const [year,month,day] =array
-    const timings=generateTimeSlots(year,month,day)
   const allBookings =await Booking.find({$and:[{date},{hairStylist}]})
   const allBookedTimings =bookedTimings(allBookings)
-  const availableTimes = checkAvailability(timings,allBookedTimings)
+  const availableTimes = checkAvailability(timeArray,allBookedTimings)
     console.log(availableTimes);
     res.status(200).json({
         message:"success",
@@ -102,17 +107,17 @@ try{
 }
 }
 
-exports.changeSchedule=async(res,req,next)=>{
+exports.changeSchedule=async(res,req)=>{
     try{
-    const {id1,id2} = req.params
-    const canceledSchedule =await Booking.findById(id1)
-    const scheduleToBeChanged = await Booking.findById(id2)
+    const { a,b } = req.body
+    const canceledSchedule =await Booking.findById(a)
+    const scheduleToBeChanged = await Booking.findById(b)
     if(! canceledSchedule||scheduleToBeChanged){
         res.status(404).json({
             message:"Schedule Not Found"
         })
     }
-    scheduleToBeChanged.dateAndTime=canceledSchedule.dateAndTime
+    scheduleToBeChanged.time=canceledSchedule.time
     scheduleToBeChanged.date=canceledSchedule.date
     await scheduleToBeChanged.save({validateBeforeSave:false})
     console.log(scheduleToBeChanged);
@@ -123,9 +128,9 @@ exports.changeSchedule=async(res,req,next)=>{
     
 }catch(err){
     console.log(err);
-    res.status(500).json({
+   /* res.status(500).json({
         message:"Internal Server Error"
-    })
+    })*/
 }
 
 }
@@ -193,19 +198,3 @@ exports.cancelSchedule=async(res,req)=>{
 }
 }
 
-exports.reminder=async()=>{
-    const time = new Date()
-    const todayBookings =await Booking.find({date})
-    todayBookings.map((booking)=>{
-        var options ={
-            phoneNumber:booking.phoneNumber,
-            message:"Your Appointment is in 10 Minutes.Get Ready to go.Please Make Sure you are on time "
-        }
-
-       var expTime=new Date(booking.dateAndTime) 
-       var bookingTime = expTime.setMinutes(date.getMinutes() - 10);
-       if(time==bookingTime) {
-        sendMessage(options)
-       }
-    })
-}
