@@ -47,15 +47,11 @@ function showRemainingTime(date,time,phoneNumber){
 
 const startTime = new Date();
 startTime.setHours(8, 0, 0, 0);
-
-// Initialize the end time as 9:00 PM
 const endTime = new Date();
 endTime.setHours(21, 0, 0, 0);
-
-// Initialize an empty array to store the times
 const timeArray = [];
 
-// Loop to generate times with 20-minute intervals
+
 let currentTime = new Date(startTime);
 while (currentTime <= endTime) {
   const formattedTime = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });

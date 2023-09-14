@@ -1,6 +1,11 @@
 const Booking= require("../model/bookingModel")
 const jwt = require('jsonwebtoken')
-const {checkAvailability, bookedTimings, timeArray, showRemainingTime}=require('../utils/functions')
+const {
+    checkAvailability,
+     bookedTimings, 
+     timeArray,
+      showRemainingTime
+    }=require('../utils/functions')
 
 
 exports.NewBooking=async(req,res)=>{
@@ -90,10 +95,10 @@ exports.remainingTime=async(req,res)=>{
 }
 exports.availableTimes=async(req,res,next)=>{
 try{
-    const {date,hairStylist} =req.body
-  const allBookings =await Booking.find({$and:[{date},{hairStylist}]})
-  const allBookedTimings =bookedTimings(allBookings)
-  const availableTimes = checkAvailability(timeArray,allBookedTimings)
+    const { date, hairStylist } = req.body
+    const allBookings = await Booking.find({ $and: [{ date }, { hairStylist }] })
+    const allBookedTimings = bookedTimings(allBookings)
+    const availableTimes = checkAvailability(timeArray, allBookedTimings)
     console.log(availableTimes);
     res.status(200).json({
         message:"success",
@@ -106,38 +111,39 @@ try{
     })
 }
 }
-
-exports.changeSchedule=async(res,req)=>{
+exports.scheduleChange=async(req,res,next)=>{
     try{
-    const { a,b } = req.body
-    const canceledSchedule =await Booking.findById(a)
-    const scheduleToBeChanged = await Booking.findById(b)
-    if(! canceledSchedule||scheduleToBeChanged){
-        res.status(404).json({
-            message:"Schedule Not Found"
+        const {id1 , id2} = req.body
+        const canceledSchedule = await Booking.findById(id1)
+        const scheduleToBeChanged = await Booking.findById(id2)
+        if(!canceledSchedule||!scheduleToBeChanged){
+            res.status(500).json({
+                message:"User Not Found"
+            })
+            return
+        }
+        scheduleToBeChanged.time=canceledSchedule.time
+        scheduleToBeChanged.date=canceledSchedule.date
+        await scheduleToBeChanged.save({validateBeforeSave:false})
+        await Booking.findByIdAndDelete(canceledSchedule.id)
+        res.status(200).json({
+            message:"sucess",
+            scheduleToBeChanged
         })
-    }
-    scheduleToBeChanged.time=canceledSchedule.time
-    scheduleToBeChanged.date=canceledSchedule.date
-    await scheduleToBeChanged.save({validateBeforeSave:false})
-    console.log(scheduleToBeChanged);
-    res.status(200).json({
-        message:"success",
-        scheduleToBeChanged
-    })
-    
-}catch(err){
-    console.log(err);
-   /* res.status(500).json({
-        message:"Internal Server Error"
-    })*/
-}
 
+
+
+    }catch(err){
+        res.status(500).json({
+            message:"Some Internal Server Error"
+        })
+        console.log(err);
+    }
 }
 exports.deleteBookings=async(req,res)=>{
     try{
-    const {_id} =req.params
-    const deletedSchedule = await Booking.findByIdAndDelete(_id)
+    const {id} =req.params
+    const deletedSchedule = await Booking.findByIdAndDelete(id)
     res.status(200).json({
         message:"Schedule Deleted"
     })
@@ -174,10 +180,10 @@ exports.showSpecificSchedules=async(req,res)=>{
 }
 
 }
-
-exports.cancelSchedule=async(res,req)=>{
+exports.cancelBooking=async(req,res,next)=>{
     try{
-        const {bookingToken} = req.cookies
+    const {bookingToken} = req.cookies
+    console.log(bookingToken);
     if(!bookingToken){
         res.status(401).json({
             message:"You Dont havce a booking token"
@@ -186,15 +192,26 @@ exports.cancelSchedule=async(res,req)=>{
     }
     const decoded =await jwt.verify(bookingToken,process.env.JWT_SECRET)
     const canceledBooking=await Booking.findByIdAndDelete(decoded.id)
-    res.status(200).json({
+    if(!canceledBooking){
+        res.status(404).json({
+            message:"Booking Not Found"
+        })
+        return
+    }
+    res.status(200).cookie("bookingToken",null,{
+        expires:new Date(
+            Date.now() 
+        ),
+        httpOnly:true
+    }).json({
         message:"Your Schedule Has Been Cancelled Successfully",
         canceledBooking
     })
-}catch(err){
-    console.log(err);
-    res.stats(500).json({
-        message:"Internal Server Error"
-    })
-}
-}
+    }catch(err){
+        res.status(500).json({
+            message:"Some Internal Server Error"
+        })
+        console.log(err);
+    }
 
+}

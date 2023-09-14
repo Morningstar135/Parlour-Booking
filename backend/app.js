@@ -18,4 +18,3 @@ app.use("*",(req,res)=>{
     })
 })
 app.listen(process.env.PORT, () => console.log(`Server listening on port ${process.env.PORT}!`))
-console.log(Date.now())
