@@ -8,6 +8,11 @@ let bookingSchema= new mongoose.Schema({
         minlength:2,
         maxlength:15,
     },
+     user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required:true
+  },
     phoneNumber:{
         type:String,
         required:true,
@@ -28,6 +33,10 @@ let bookingSchema= new mongoose.Schema({
     isBooked:{
         type:Boolean,
         default:true
+    },
+    pin:{
+        type:Number,
+        required:true
     }
 })
 bookingSchema.methods.getJwtToken = function(){

@@ -3,11 +3,11 @@ const User = require("../model/userModel")
 
 exports.authenticateUser=async(req,res,next)=>{
     try{
-    const {token} = req.cookies
+        var {token}= req.params
     if(!token){
         res.status(401).json({
             message:'Login to handle this resource'
-        })
+        })    
         return
     }
     const decoded =await jwt.verify(token,process.env.JWT_SECRET)

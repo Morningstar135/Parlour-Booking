@@ -1,5 +1,18 @@
 const { sendMessage } = require("./sendMessage")
+const Booking = require('../model/bookingModel')
 
+const idNum=0
+const hairStylists =[
+  "Karthick Kumar",
+  "Santhosh Kumar"
+]
+function getHairStylists(){
+  return hairStylists
+}
+function addHairStylists(name){
+    hairStylists.push({name})
+    return hairStylists
+}
 const bookedTimings =(array1)=>{
   let array2=[]
   array1.map((booking)=>{
@@ -12,24 +25,26 @@ const bookedTimings =(array1)=>{
 function checkAvailability(array1, array2) {
   return array1.filter((item) => !array2.includes(item));
 }
-function millisecondsToDHMS(milliseconds) {
-  const seconds = Math.floor(milliseconds / 1000);
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const minutes = Math.floor(((seconds % 86400) % 3600) / 60);
 
-  return `${days} days, ${hours} hours, ${minutes} minutes`;
-}
-function showRemainingTime(date,time,phoneNumber){
+function showRemainingTime(date,time,phoneNumber,user){
   var input = `${date}, ${time}`
   var bookingTime=Date.parse(input)
   var currentDate=Date.parse(new Date().toLocaleString())
   var reminderTime = bookingTime- 600000
+  var remainingTime
+  function millisecondsToDHMS(milliseconds) {
+    const seconds = Math.floor(milliseconds / 1000);
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor(((seconds % 86400) % 3600) / 60);
+  
+    return `${days} days, ${hours} hours, ${minutes} minutes`;
+  }
   if(reminderTime>currentDate)
   {
      var remainingMs =bookingTime-currentDate
-     var remainingTime = millisecondsToDHMS(remainingMs)
-     return remainingTime
+      remainingTime= millisecondsToDHMS(remainingMs)
+     return {remainingTime,bookingTime}
   }
   else if(reminderTime===currentDate){
     var options = {
@@ -38,6 +53,9 @@ function showRemainingTime(date,time,phoneNumber){
     }
     sendMessage(options)
     
+  }else if(bookingTime<Date.now()){
+      const deleted = Booking.findOneAndDelete({user})
+      return "Your Schedule Have Passed"
   }
 
 
@@ -58,4 +76,4 @@ while (currentTime <= endTime) {
   timeArray.push(formattedTime);
   currentTime.setMinutes(currentTime.getMinutes() + 20);
 }
-module.exports={checkAvailability,bookedTimings,timeArray,showRemainingTime}
+module.exports={checkAvailability,bookedTimings,timeArray,showRemainingTime,getHairStylists,addHairStylists}

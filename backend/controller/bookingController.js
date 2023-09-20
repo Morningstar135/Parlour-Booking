@@ -1,10 +1,11 @@
 const Booking= require("../model/bookingModel")
-const jwt = require('jsonwebtoken')
 const {
     checkAvailability,
      bookedTimings, 
      timeArray,
-      showRemainingTime
+      showRemainingTime,
+      getHairStylists,
+      addHairStylists
     }=require('../utils/functions')
 
 
@@ -12,24 +13,21 @@ exports.NewBooking=async(req,res)=>{
    
     try{
     const {name,phoneNumber,date,time,hairStylist} =req.body
+    const obj = req.user
+    const user =obj.id
+    const pin = Math.floor(100000 + Math.random() * 900000);
     const booked =await Booking.create({
         name,
         phoneNumber,
         date,
         time,
-        hairStylist
+        hairStylist,
+        pin,
+        user
     })
-    const options = {
-        expires:new Date(
-            Date.now() + 3* 24 * 60 * 60 * 1000 
-        ),
-        httpOnly:true
-    }
-    const bookingToken = await booked.getJwtToken()
-    res.status(200).cookie('bookingToken',bookingToken,options).json({
+    res.status(200).json({
         message:'Success',
-        booked,
-        bookingToken
+        booked
     })
 }catch(err){
     res.status(500).json({
@@ -58,34 +56,33 @@ exports.allBookings=async(req,res)=>{
         console.error(err);
     }
 }
-exports.remainingTime=async(req,res)=>{
+exports.remainingTime =async(req,res)=>{
     try{
-        const {bookingToken} = req.cookies
-        
-    if(!bookingToken){
+        const obj = req.user
+        const user =obj.id
+    if(!user){
         res.status(401).json({
             message:"You Dont havce a booking token"
         })
         return
     }
-    try{
-    const decoded =await jwt.verify(bookingToken,process.env.JWT_SECRET)
-    var booking=await Booking.findById(decoded.id)
-    }catch(err){
-        res.status(401).json({
-            message:"Sorry Some Error Occured Your Booking Token Must Have Expired"
+    const booking=await Booking.findOne({user})
+    if(! booking){
+        res.status(404).json({
+            message:"Oops! This Booking Doesn't Exist"
         })
         return
     }
     const date = booking.date
     const time =booking.time
     const phoneNumber = booking.phoneNumber
-    const remainingTimeString=showRemainingTime(date,time,phoneNumber)
+    const pin =booking.pin
+    const remainingTimeString=showRemainingTime(date,time,phoneNumber,user) 
     res.status(200).json({
         message:'success',
-        remainingTimeString
+        remainingTimeString,
+        pin
     })
-
     }catch(err){
         res.status(500).json({
             message:'Internal Server Error'
@@ -96,10 +93,9 @@ exports.remainingTime=async(req,res)=>{
 exports.availableTimes=async(req,res,next)=>{
 try{
     const { date, hairStylist } = req.body
-    const allBookings = await Booking.find({ $and: [{ date }, { hairStylist }] })
+    const allBookings = await Booking.find({date,hairStylist})
     const allBookedTimings = bookedTimings(allBookings)
     const availableTimes = checkAvailability(timeArray, allBookedTimings)
-    console.log(availableTimes);
     res.status(200).json({
         message:"success",
         availableTimes
@@ -159,7 +155,7 @@ exports.deleteBookings=async(req,res)=>{
 exports.showSpecificSchedules=async(req,res)=>{
     try{
     const {hairStylist,date} = req.body
-    const specificSchedules = await Booking.find({$and:[{hairStylist},{date}]})
+    const specificSchedules = await Booking.find({hairStylist,date})
     if(!specificSchedules){
         res.status(404).json({
             message:"Sorry!..There are no Schedules for You"
@@ -182,28 +178,21 @@ exports.showSpecificSchedules=async(req,res)=>{
 }
 exports.cancelBooking=async(req,res,next)=>{
     try{
-    const {bookingToken} = req.cookies
-    console.log(bookingToken);
-    if(!bookingToken){
+        const user =req.user.id
+    if(!user){
         res.status(401).json({
-            message:"You Dont havce a booking token"
+            message:"You Dont havce a Schedule to cancel"
         })
         return
-    }
-    const decoded =await jwt.verify(bookingToken,process.env.JWT_SECRET)
-    const canceledBooking=await Booking.findByIdAndDelete(decoded.id)
+    }   
+    const canceledBooking=await Booking.findOneAndDelete({user})
     if(!canceledBooking){
         res.status(404).json({
             message:"Booking Not Found"
         })
         return
     }
-    res.status(200).cookie("bookingToken",null,{
-        expires:new Date(
-            Date.now() 
-        ),
-        httpOnly:true
-    }).json({
+    res.status(200).json({
         message:"Your Schedule Has Been Cancelled Successfully",
         canceledBooking
     })
@@ -214,4 +203,19 @@ exports.cancelBooking=async(req,res,next)=>{
         console.log(err);
     }
 
+}
+exports.getHairStylistArray=(req,res)=>{
+    const hairStylists=getHairStylists()
+    res.status(200).json({
+        message:`success`,
+        hairStylists
+    })
+}
+exports.addHairStylistInArray=(req,res)=>{
+    const {name}=req.body
+    const hairStylists=addHairStylists(name)
+    res.status(200).json({
+        message:`success`,
+        hairStylists
+    })
 }

@@ -1,0 +1,17 @@
+body{
+  background-color: gray;
+  color:white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family:roboto ;
+}
+#login{
+   background-color: rgba(245, 245, 245, 0.685);
+}
+#navbar{
+  background-color: black;
+}
+#dateselect{
+  height: fit-content;
+  overflow-y: scroll;
+}
