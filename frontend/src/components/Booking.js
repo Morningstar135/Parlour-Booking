@@ -103,7 +103,13 @@ const Booking = ({token}) => {
     <div className='card text-white' id='login'>
     <form className='container-sm mt-5 p-3 cardbody'>
         <h5 className="card-title text-center text-dark">Booking</h5>
-        <div className='row mt-2 mb-3 text-center'>
+        <div className='row mt-4 mb-3 text-center'>
+        <div className='col text-center text-dark'>
+                    If you are not LoggedIn Please Login To Book your Schedule<br></br>
+                    <Button variant="contained"  onClick={(e)=>{e.preventDefault()}}  >Login</Button>
+                </div>
+        </div>
+        <div className='row mt-4 mb-3 text-center'>
             <div className='col'>
                 <TextField label="Name" fullWidth helperText={wrongName?"Name Cannot be Shorter than 4 characters":''} error={wrongName} variant="outlined" value={name} size="small" onChange={(e)=>{setName(e.target.value)
                 setWrongName(false)}} />
@@ -167,12 +173,7 @@ const Booking = ({token}) => {
             </div>
         </div>:<div></div>
         }
-                <div className='row mt-2 mb-3 text-center'>
-        <div className='col text-center text-dark'>
-                    If you are not LoggedIn Please Login To Book your Schedule
-                    <Button variant="contained" fullWidth onClick={(e)=>{e.preventDefault()}}  >Login</Button>
-                </div>
-        </div>
+             
         
 
 

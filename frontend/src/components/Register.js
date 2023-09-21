@@ -1,6 +1,7 @@
 import React,{useState} from 'react'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
 import {URL} from '../utils/baseURL'
 import Cookies from 'js-cookie'
 import Alert from '@mui/material/Alert';
@@ -8,6 +9,7 @@ const Register = ({mobileNumInfo,passInfo}) => {
     const [phoneNumber,setPhoneNumber] = useState('')
     const [name,setName] = useState('')
     const [message,setMessage] = useState("")
+    const navigate = useNavigate()
     const [show,setShow] = useState(false)
     const [sever,setSever]=useState(true)
     const [wrongNum,setWrongNum] = useState(false)
@@ -82,7 +84,9 @@ const Register = ({mobileNumInfo,passInfo}) => {
             <div className='row mt-2 mb-3'>
                 <div className='col text-center text-dark'>
                     Already An User?
-                    <Button variant="contained" fullWidth onClick={(e)=>{e.preventDefault()}}  >Login</Button>
+                    <Button variant="contained" fullWidth onClick={(e)=>{e.preventDefault()
+                    navigate('/login')
+                    }}  >Login</Button>
                 </div>
             </div>
             

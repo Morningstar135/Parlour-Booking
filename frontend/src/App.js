@@ -1,8 +1,12 @@
 import Footer from "./components/Footer"
 import React, { useEffect, useState } from 'react';
+import { Routes, Route } from "react-router-dom";
 import NavBar from './components/NavBar';
 import 'bootstrap/dist/css/bootstrap.css';
+import AdminPanel from './components/AdminPanel'
+import Home from "./components/Home";
 import Login from './components/Login'
+import NoPage from "./components/NoPage";
 import Register from "./components/Register";
 import Booking from "./components/Booking";
 import RemaingTime from "./components/RemaingTime";
@@ -21,14 +25,19 @@ function App() {
   const mobileNumInfo = "Enter A Valid Mobile Number.We Recommmend You to use your WhatsApp Number, Because We use WhatsApp for further Updates"
   const passInfo = "Password must be between 6-10 characters also it can contain (@#$*) these Special Characters "
   return (
+    
     <div className="container-fluid">
       <NavBar />
     <div className='container-md'>
- 
-      <Login passInfo={passInfo} mobileNumInfo={mobileNumInfo} /> 
-      <Register  passInfo={passInfo} mobileNumInfo={mobileNumInfo}  />
-     <Booking mobileNumInfo={mobileNumInfo} token={token}   />
-      <RemaingTime token={token}  />
+      <Routes>
+      <Route path="/" element={<Home />} />
+          <Route path="login" element={<Login passInfo={passInfo} mobileNumInfo={mobileNumInfo} /> } />
+          <Route path="register" element={<Register  passInfo={passInfo} mobileNumInfo={mobileNumInfo}  />} />
+          <Route path="booking" element={<Booking mobileNumInfo={mobileNumInfo} token={token}   />} />
+          <Route path="remainingtime" element={<RemaingTime token={token}  />} />
+          <Route path="adminpanel" element={<AdminPanel />} />
+          <Route path="*" element={<NoPage />} />
+      </Routes>
       <Footer />
     </div>
     </div>

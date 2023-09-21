@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import URL from '../utils/baseURL'
+import {URL} from '../utils/baseURL'
 import { Button,Alert } from '@mui/material'
 const AdminPanel = (token) => {
   const [data,setData] = useState([])

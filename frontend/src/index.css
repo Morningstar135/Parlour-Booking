@@ -15,3 +15,10 @@ body{
   height: fit-content;
   overflow-y: scroll;
 }
+#nav-links:hover{
+  color: gray;
+  
+}
+#nav-links{
+  color: white;
+}
