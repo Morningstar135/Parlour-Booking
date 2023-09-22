@@ -17,7 +17,7 @@ router.route('/logout').get(
     userLogout
     )
 router.route('/password/forgot').post(forgotPassword)
-router.route('/password/reset/:token').get(resetPassword)
+router.route('/password/reset/:resettoken').get(resetPassword)
 router.route('/register/:pass').post(
     authenticateUser,
     makeAdmin

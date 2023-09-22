@@ -12,9 +12,11 @@ const {
 exports.NewBooking=async(req,res)=>{
    
     try{
-    const {name,phoneNumber,date,time,hairStylist} =req.body
+    const {date,time,hairStylist} =req.body
+    const dateAndTime = date+time
     const obj = req.user
     const user =obj.id
+    const {name,phoneNumber}=obj
     const pin = Math.floor(100000 + Math.random() * 900000);
     const booked =await Booking.create({
         name,
@@ -23,7 +25,8 @@ exports.NewBooking=async(req,res)=>{
         time,
         hairStylist,
         pin,
-        user
+        user,
+        dateAndTime
     })
     res.status(200).json({
         message:'Success',
@@ -77,10 +80,10 @@ exports.remainingTime =async(req,res)=>{
     const time =booking.time
     const phoneNumber = booking.phoneNumber
     const pin =booking.pin
-    const remainingTimeString=showRemainingTime(date,time,phoneNumber,user) 
+    const remainingTime=showRemainingTime(date,time,phoneNumber,user) 
     res.status(200).json({
         message:'success',
-        remainingTimeString,
+        remaingTime:remainingTime.remainingTime,
         pin
     })
     }catch(err){
@@ -138,24 +141,36 @@ exports.scheduleChange=async(req,res,next)=>{
 }
 exports.deleteBookings=async(req,res)=>{
     try{
-    const {id} =req.params
-    const deletedSchedule = await Booking.findByIdAndDelete(id)
-    res.status(200).json({
-        message:"Schedule Deleted"
-    })
+        console.log('entered the function')
+        const {id} =req.body  
+    const deletedBooking=await Booking.findByIdAndDelete(id)
+    console.log(deletedBooking)
+   if(!deletedBooking){
+        console.log('deletedBooking Empty')
+        res.status(404).json({
+            message:"Booking Not Found"
+        })
+        return
+    }
+    console.log('executed the function successful')
+    res.status(200).json({ 
+        message:"This Schedule Has Deleted Successfully",
+        deletedBooking
+        })
+    }catch(err){
+        res.status(500).json({
+            message:"Some Internal Server Error"
+        })
+        console.log(err);
+    }
 
-}catch(err){
-    console.log(err);
-    res.stats(500).json({
-        message:"Internal Server Error"
-    })
-}
 }
 
 exports.showSpecificSchedules=async(req,res)=>{
     try{
     const {hairStylist,date} = req.body
     const specificSchedules = await Booking.find({hairStylist,date})
+    console.log(specificSchedules)
     if(!specificSchedules){
         res.status(404).json({
             message:"Sorry!..There are no Schedules for You"

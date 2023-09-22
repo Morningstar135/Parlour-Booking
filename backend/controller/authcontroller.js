@@ -11,7 +11,13 @@ const options = {
 exports.userRegister = async(req,res)=>{
     try{
     let {name,phoneNumber,password} = req.body
-    
+    const existedUser =await User.findOne({phoneNumber})
+    if(existedUser){
+        res.status(400).json({
+            message:"This Number Already Exists Try Logging In  to your Account"
+        })
+        return
+    }
     const registeredUser = await User.create({
         name,
         phoneNumber,
@@ -19,7 +25,7 @@ exports.userRegister = async(req,res)=>{
     }) 
     const token =await registeredUser.getJwtToken()
     res.status(200).cookie('token',token,options).json({
-        success:true,
+        message:'Success',
         registeredUser,
         token
     })
@@ -87,16 +93,19 @@ exports.forgotPassword = async (req, res, next)=>{
     const user =  await User.findOne({phoneNumber: req.body.phoneNumber});
 
     if(!user) {
-        return next(new ErrorHandler('User not found with this email', 404))
+        res.status(404).json({
+            message:"User Not Found"
+        })
+        return
     }
 
     const resetToken = user.getResetToken();
     await user.save({validateBeforeSave: false})
     
-    const resetUrl = `api/password/reset/${resetToken}`;
+    const resetUrl = `http://localhost:3000/reset/${resetToken}`;
 
     const message = `Your password reset url is as follows \n\n 
-    ${resetUrl} \n\n If you have not requested this email, then ignore it.`;
+    ${resetUrl} \n\n If you have not requested this, then ignore it.`;
     sendMessage({
         phoneNumber:user.phoneNumber,
         message
@@ -110,7 +119,7 @@ exports.forgotPassword = async (req, res, next)=>{
 }
 exports.resetPassword = async (req, res, next) => {
     try{
-   const resetPasswordToken =  crypto.createHash('sha256').update(req.params.token).digest('hex'); 
+   const resetPasswordToken =  crypto.createHash('sha256').update(req.params.resettoken).digest('hex'); 
 
     const user = await User.findOne( {
         resetPasswordToken,

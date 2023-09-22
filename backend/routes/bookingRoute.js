@@ -55,7 +55,7 @@ router.route('/admin/schedule/change/:token').post(
     authorizeUser('admin'),
     scheduleChange
 )
-router.route('/admin/schedule/delete/:token/:_id').delete(
+router.route('/admin/schedule/delete/:token').delete(
     authenticateUser,
     authorizeUser('admin'),
     deleteBookings

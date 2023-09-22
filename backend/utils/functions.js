@@ -37,8 +37,8 @@ function showRemainingTime(date,time,phoneNumber,user){
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor(((seconds % 86400) % 3600) / 60);
-  
-    return `${days} days, ${hours} hours, ${minutes} minutes`;
+    const timeObj = {days,hours,minutes}
+    return timeObj;
   }
   if(reminderTime>currentDate)
   {

@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
                     return /\d{10}/.test(v);
                 },
                 message: props => `${props.value} is not a valid phone number!`
-            }   
+            },
+            unique:true   
     },
     password: {
         type: String,
@@ -26,7 +27,7 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Please enter password'],
         minlength: [6, 'Password cannot be less than 6 characters'],
         select: false,
-        maxlength:[10,'Password cannot exceed 10 charcters']
+        maxlength:[15,'Password cannot exceed 15 charcters']
     },
     role :{
         type: String,

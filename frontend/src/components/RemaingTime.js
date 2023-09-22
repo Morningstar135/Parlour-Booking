@@ -4,33 +4,61 @@ import {URL} from '../utils/baseURL'
 import Alert from '@mui/material/Alert';
 
 const RemaingTime = ({token}) => {
-  const [remainingTime,setRemainingTime]=useState('')
+  const [day,setDay]=useState(0)
+  const [hours,setHours]=useState(0)
+  const [minutes,setMinutes]=useState(0)
   const [bookingPin,setBookingPin]=useState('')
   const [show,setShow] = useState(false)
     const [sever,setSever]=useState(true)
     const [message,setMessage]=useState('')
   useEffect(()=>{
-    URL.get(`/api/user/book/show/remaining/time/${token}`).then((res)=>{
-      setRemainingTime(res.data.remainingTimeString.remainingTime)
-      setBookingPin(res.data.pin)
-    })
+    getTimeObj()
   },[token])
-  setInterval(() => {
-    URL.get(`/api/user/book/show/remaining/time/${token}`).then((res)=>{
-      setRemainingTime(res.data.remainingTimeString.remainingTime)
-      setBookingPin(res.data.pin)
-    })
-  }, 60000);
+  const getTimeObj =async()=>{
+    if(token){
+      const res = await URL.get(`/api/user/book/show/remaining/time/${token}`).catch((err)=>{
+        if(err.response){
+          setShow(true)
+          setSever(false)
+          setMessage(err.response.data.message)
+        }
+        else if(err.request){
+          setShow(true)
+          setSever(false)
+          setMessage('Some Network Error Occured Refresh The Page And Try Again')
+        }
+      })
+      const resObj = res.data
+      if(resObj){
+        console.log(resObj)
+        setDay(resObj.remaingTime.days)
+        setMinutes(resObj.remaingTime.minutes)
+        setHours(resObj.remaingTime.hours)
+        setBookingPin(resObj.pin)
+      }
+    }
+    
+   
+  }
   const handleCancel =async()=>{
-    try{
-    const response = await URL.post(`/api/user/book/cancel/schedule/${token}`)
+    const response = await URL.get(`/api/user/book/cancel/schedule/${token}`).catch((err)=>{
+      if(err.response){
+        setShow(true)
+        setSever(false)
+        setMessage(err.response.data.message)
+      }
+      else if(err.request){
+        setShow(true)
+        setSever(false)
+        setMessage('Some Network Error Occured Refresh The Page And Try Again')
+      }
+    })
+    if(response.data){
     setMessage(response.data.message)
     setShow(true)
-  }catch(err){
-    setMessage(err.message)
-    setShow(true)
-    setSever(false)
-  }
+  
+      setSever(true)
+    }
   }
   return (
     <section className='container-sm'>
@@ -43,10 +71,11 @@ const RemaingTime = ({token}) => {
           <figcaption className="blockquote-footer">
              <cite title="Source Title">Benjamin Franklin</cite>
           </figcaption>
+          <button onClick={getTimeObj}>Show Remaining Time</button>
         </figure>
-          <p>You have approximately 
-            <span>{remainingTime} </span>
-            minutes left for your appointment. We look forward to serving you!</p>
+          <p>You have approximately <br></br>
+            {day} Days, {hours} Hours , {minutes} minutes left for your appointment.<br></br> 
+            We look forward to serving you!</p>
         </div>
         <div>
           <p>Please Take a ScreenShot or Note This Booking Token Given Below</p>

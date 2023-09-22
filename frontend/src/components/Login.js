@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import {URL} from '../utils/baseURL'
 import Alert from '@mui/material/Alert';
 import Cookies from 'js-cookie'
+import { useNavigate } from 'react-router-dom';
 const Login = ({mobileNumInfo,passInfo,setToken}) => {
     const [phoneNumber,setPhoneNumber] = useState('')
     const [password,setPassword] = useState('')
@@ -14,10 +15,11 @@ const Login = ({mobileNumInfo,passInfo,setToken}) => {
     const [sever,setSever]=useState(true)
     const [showFPInfo,setShowFPInfo] = useState(false)
     const [showSucInfo,setShowSucInfo] = useState(false)
+    const navigate = useNavigate()
     const handleLoginSubmit =async(event)=>{
         event.preventDefault()
         const phoneNumberPattern = /^\d{10}$/
-        const passwordPattern =/^[a-zA-Z0-9@#$*]{6}$/
+        const passwordPattern =/^[a-zA-Z0-9@#$*]{6,}$/
 
         if (! phoneNumberPattern.test(Number(phoneNumber))) {
             setWrongNum(true)
@@ -26,35 +28,56 @@ const Login = ({mobileNumInfo,passInfo,setToken}) => {
             setWrongPass(true)
           } 
         if(phoneNumberPattern.test(Number(phoneNumber)) && passwordPattern.test(password) ){
-            const response=await URL.post(`/api/user/login`,{phoneNumber,password})
-            const resObj=response.data
+            const response=await URL.post(`/api/user/login`,{phoneNumber,password}).catch((err)=>{
+                if(err.response){
+                  setShow(true)
+                  setSever(false)
+                  setMessage(err.response.data.message)
+                }
+                else if(err.request){
+                  setShow(true)
+                  setSever(false)
+                  setMessage('Some Network Error Occured Refresh The Page And Try Again')
+                }
+              })
+              const resObj=response.data
             if(resObj){
-                console.log(resObj)
                 setMessage(resObj.message)
                 setShow(true)
                 Cookies.set('token',resObj.token,{expires:30})
-                if(message==="Sucess"){
-                    setSever(true)
-                }else{
-                    setSever(false)
+                setToken(Cookies.get('token'))
+                if(resObj.user.role==='admin'){
+                    navigate('/adminpanel')
                 }
-            }else{
-                setMessage("Some Error Occured Please Refresh and Try Again")
+                else{
+                    navigate('/booking')
+                }
+
             }
-            
-        }
     }
+}
     const handleForgotPass=async()=>{
         setShow(false)
         if(phoneNumber){
-            const response = await URL.post("/password/forgot")
+            const response = await URL.post("/api/user/password/forgot",{phoneNumber}).catch((err)=>{
+                if(err.response){
+                  setShow(true)
+                  setSever(false)
+                  setMessage(err.response.data.message)
+                }
+                else if(err.request){
+                  setShow(true)
+                  setSever(false)
+                  setMessage('Some Network Error Occured Refresh The Page And Try Again')
+                }
+              })
+           if(response.data){
             setMessage(response.data.message)
             setShowSucInfo(true)
+           } 
         }else{
         setShowFPInfo(true)
     }
-
-
     }
     return (
         <div className='container-sm'>
@@ -78,6 +101,14 @@ const Login = ({mobileNumInfo,passInfo,setToken}) => {
             <div className='row mt-2 mb-3'>
                 <div className='col text-center'>
                     <Button variant="contained" fullWidth onClick={handleLoginSubmit} type='submit' >Login</Button>
+                </div>
+            </div>
+            <div className='row mt-4 mb-3 text-center'>
+            <div className='col text-center text-dark'>
+                    If you are not a Registered User Please Register<br></br>
+                    <Button variant="contained"  onClick={(e)=>{e.preventDefault()
+                        navigate('/register')
+                    }}  >Register</Button>
                 </div>
             </div>
             <div className='row mt-2 mb-3'>

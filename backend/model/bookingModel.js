@@ -30,6 +30,11 @@ let bookingSchema= new mongoose.Schema({
         type:String,
         required:true 
     },
+    dateAndTime:{
+        type:String,
+        required:true,
+        unique:true
+    },
     isBooked:{
         type:Boolean,
         default:true

@@ -1,23 +1,20 @@
 import React,{useState} from 'react';
-import TextField from '@mui/material/TextField';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import {URL} from '../utils/baseURL';
 import Alert from '@mui/material/Alert';
 const Booking = ({token}) => {
-    const [phoneNumber,setPhoneNumber] = useState('')
-    const [name,setName] = useState('')
     const [time,setTime] = useState('')
     const [message,setMessage] = useState("")
     const [show,setShow] = useState(false)
     const [showHS,setShowHS] = useState(false)
     const [sever,setSever]=useState(true)
-    const [wrongNum,setWrongNum] = useState(false)
-    const [wrongName,setWrongName] = useState(false)
     const [dateVal,setDateVal] = useState('')
     const [timings,setTimings] = useState(['Morning','Afternoon','Evening'])
     var [formattedDates,setFormattedDates]=useState(['today','tomorrow','Day After tomorrow'])
     var [hairStylist,setHairStylist]=useState('')
     var [hairStylists,setHairStylists]=useState(["stylist1",'stylist2'])
+    const navigate =useNavigate()
     const today =new Date()
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
@@ -40,8 +37,14 @@ const Booking = ({token}) => {
        
     }
     const onHSFocus =async()=>{
-        const res=await URL.get('api/user/book/get/hairstylists')
-        setHairStylists(res.data.hairStylists)
+        const res=await URL.get('api/user/book/get/hairstylists').catch((err)=>{
+          if(err.request){
+              setShow(true)
+              setSever(false)
+              setMessage('Some Network Error Occured Refresh The Page And Try Again')
+            }
+          })
+          if(res.data) setHairStylists(res.data.hairStylists)
     }
     const onHSChange=async(e)=>{
         setHairStylist(e.target.value)
@@ -49,53 +52,52 @@ const Booking = ({token}) => {
     }
     const onTimeFocus=async()=>{
         console.log({hairStylist,date:dateVal});
-       const response= await URL.post('api/user/book/availabletimes',{hairStylist,date:dateVal}) 
-       setTimings(response.data.availableTimes)
+       const response= await URL.post('api/user/book/availabletimes',{hairStylist,date:dateVal}).catch((err)=>{
+ if(err.request){
+          setShow(true)
+          setSever(false)
+          setMessage('Some Network Error Occured Refresh The Page And Try Again')
+        }
+      })
+      if(response.data) setTimings(response.data.availableTimes)
     }
     const handleSubmit =async(e)=>{
         e.preventDefault()
-        const phoneNumberPattern = /^\d{10}$/
-        const namePattern = /^[A-Za-z\s'-]{4,}$/
-        if(! namePattern.test(name)){
-            setWrongName(true)
-        }
-
-        if (! phoneNumberPattern.test(Number(phoneNumber))) {
-            setWrongNum(true)
-          } 
-        if(phoneNumberPattern.test(Number(phoneNumber)) && namePattern.test(name)){
             if(dateVal&&hairStylist&&time){
             const data ={
-                name,
-                phoneNumber,
                 date:dateVal,
                 hairStylist,
                 time
             }
-            const response=await URL.post(`api/user/book/new/${token}`,data)
-            setMessage(response.statusText)
-            const resObj=response.data
-            if(resObj){
+            const response=await URL.post(`api/user/book/new/${token}`,data).catch((err)=>{
+                if(err.response){
+                  setShow(true)
+                  setSever(false)
+                  setMessage(err.response.data.message)
+                }
+                else if(err.request){
+                  setShow(true)
+                  setSever(false)
+                  setMessage('Some Network Error Occured Refresh The Page And Try Again')
+                }
+              })
+              if(response.data){
+                const resObj=response.data
                 console.log(resObj)
                 setMessage(resObj.message)
                 setShow(true)
-                if(message==="Sucess"){
+                navigate('/remainingtime')
                     setSever(true)
-                }else{
-                    setSever(false)
-                }
-            }else{
-                setShow(true)
-                setMessage("Some Error Occured Please Refresh and Try Again")
-            }
             console.log(data);
+              }
+            
         }else{
             setShow(true)
             setMessage('Please Select All Requirements')
         }
         }
         
-    }
+
   return (
     <div className='container-sm'>
     <div className='row'>
@@ -106,21 +108,11 @@ const Booking = ({token}) => {
         <div className='row mt-4 mb-3 text-center'>
         <div className='col text-center text-dark'>
                     If you are not LoggedIn Please Login To Book your Schedule<br></br>
-                    <Button variant="contained"  onClick={(e)=>{e.preventDefault()}}  >Login</Button>
+                    <Button variant="contained"  onClick={(e)=>{e.preventDefault()
+                        navigate('/login')
+                    }}  >Login</Button>
                 </div>
         </div>
-        <div className='row mt-4 mb-3 text-center'>
-            <div className='col'>
-                <TextField label="Name" fullWidth helperText={wrongName?"Name Cannot be Shorter than 4 characters":''} error={wrongName} variant="outlined" value={name} size="small" onChange={(e)=>{setName(e.target.value)
-                setWrongName(false)}} />
-            </div>
-        </div>
-        <div className='row mt-3 mb-3 text-center'>
-            <div className='col'>
-                <TextField error={wrongNum} fullWidth helperText={wrongNum?"Please Provide a Valid Number":"We Recommend You to use your WhatsApp Number"} label="Phone Number" variant="outlined" size="small" value={phoneNumber} onChange={(e)=>{setPhoneNumber(e.target.value)
-                setWrongNum(false)}}/>
-            </div>
-        </div >
         <div className='row mt-3 mb-3 text-center'>
             <div className='col'>
                     <select className="form-select form-select-lg mb-3" onChange={onDateChange} onFocus={onDateFocus}>

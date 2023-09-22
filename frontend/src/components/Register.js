@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import {URL} from '../utils/baseURL'
 import Cookies from 'js-cookie'
 import Alert from '@mui/material/Alert';
-const Register = ({mobileNumInfo,passInfo}) => {
+const Register = ({mobileNumInfo,passInfo,setToken}) => {
     const [phoneNumber,setPhoneNumber] = useState('')
     const [name,setName] = useState('')
     const [message,setMessage] = useState("")
@@ -32,22 +32,29 @@ const Register = ({mobileNumInfo,passInfo}) => {
             setWrongPass(true)
           } 
         if(phoneNumberPattern.test(Number(phoneNumber)) && passwordPattern.test(password) && namePattern.test(name)){
-            const response=await URL.post(`/api/user/register`,{name,phoneNumber,password})
-            setMessage(response.statusText)
+            var response=await URL.post(`/api/user/register`,{name,phoneNumber,password}).catch((err)=>{
+                if(err.response){
+                  setShow(true)
+                  setSever(false)
+                  setMessage(err.response.data.message)
+                }
+                else if(err.request){
+                  setShow(true)
+                  setSever(false)
+                  setMessage('Some Network Error Occured Refresh The Page And Try Again')
+                }
+              })
+            setShow(true)
             const resObj=response.data
-            if(resObj){
+              if(resObj){
                 console.log(resObj)
                 setMessage(resObj.message)
-                setShow(true)
                 Cookies.set('token',resObj.token,{expires:30})
-                if(message==="Sucess"){
+                setToken(Cookies.get('token'))
                     setSever(true)
-                }else{
-                    setSever(false)
-                }
-            }else{
-                setMessage("Some Error Occured Please Refresh and Try Again")
-            }
+              }
+                 
+            
             
         }
     }
@@ -57,7 +64,7 @@ const Register = ({mobileNumInfo,passInfo}) => {
         <div className='col-lg-6 mx-auto'>
         <div className='card text-white' id='login'>
         <form className='container-sm mt-5 p-3 cardbody'>
-            <h5 className="card-title text-center text-dark">Register</h5>
+            <h5 className="card-title text-center text-dark mb-2">Register</h5>
             <div className='row mt-2 mb-3 text-center'>
                 <div className='col'>
                     <TextField label="Name" fullWidth helperText={wrongName?"Name Cannot be Shorter than 4 characters":""} error={wrongName} variant="outlined" value={name} size="small" onChange={(e)=>{setName(e.target.value)
