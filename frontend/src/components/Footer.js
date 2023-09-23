@@ -1,4 +1,8 @@
+import React from "react";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 const Footer = () => {
+    const navigate = useNavigate()
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     return(
@@ -12,6 +16,7 @@ const Footer = () => {
             Phone: [Salon Phone Number]
             Email: [Salon Email]
         </address>
+        <h3>Discover More  <Button variant="text"  onClick={()=>navigate('/about')} >About Us</Button></h3>
        <h4 className="fs-6"> © {currentYear} Lycon Saloon</h4>
        </footer>
 

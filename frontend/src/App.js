@@ -10,6 +10,7 @@ import NoPage from "./components/NoPage";
 import Register from "./components/Register";
 import Booking from "./components/Booking";
 import RemaingTime from "./components/RemaingTime";
+import About from './components/About';
 import Cookies from 'js-cookie'
 function App() {
   const [token,setToken]=useState('')
@@ -33,6 +34,7 @@ function App() {
           <Route path="booking" element={<Booking mobileNumInfo={mobileNumInfo} token={token}   />} />
           <Route path="remainingtime" element={<RemaingTime token={token}  />} />
           <Route path="adminpanel" element={<AdminPanel token={token} />} />
+          <Route path="about" element={<About />} />
           <Route path="*" element={<NoPage />} />
       </Routes>
       <Footer />
