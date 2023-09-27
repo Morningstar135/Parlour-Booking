@@ -40,20 +40,20 @@ function showRemainingTime(date,time,phoneNumber,user){
     const timeObj = {days,hours,minutes}
     return timeObj;
   }
-  if(reminderTime>currentDate)
+  if(reminderTime > currentDate)
   {
      var remainingMs =bookingTime-currentDate
       remainingTime= millisecondsToDHMS(remainingMs)
      return {remainingTime,bookingTime}
   }
-  else if(reminderTime===currentDate){
+  else if(reminderTime===currentDate || reminderTime < currentDate ){
     var options = {
       phoneNumber,
       message:"Your appointment at Lycon is on 10 Mins.Your appointment is important to us, and our team is ready to provide you with exceptional service. Please make sure to arrive a few minutes before your scheduled time to ensure that we can accommodate your full appointment. If, for any reason, you are unable to make it to your appointment, please let us know as soon as possible. We understand that unforeseen circumstances may arise, and we would appreciate the opportunity to reschedule your appointment or offer it to another valued customer.We value your business and look forward to serving you at Lycon. If you have any questions or need to make changes to your appointment, please don't hesitate to book another Appointment at our website.Thank you for choosing Lycon, and we can't wait to see you soon!"
     }
     sendMessage(options)
     
-  }else if(bookingTime<Date.now()){
+  }else if(bookingTime < currentDate){
       const deleted = Booking.findOneAndDelete({user})
       return "Your Schedule Have Passed"
   }

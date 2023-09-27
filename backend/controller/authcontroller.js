@@ -33,7 +33,6 @@ exports.userRegister = async(req,res)=>{
     res.status(500).json({
         message:"Some Internal Server Error"
     })
-    console.error(err);
     return
 }
 }
@@ -43,20 +42,20 @@ exports.userLogin=async(req,res)=>{
     const {phoneNumber,password}=req.body
     if(!phoneNumber||!password){
         res.status(401).json({
-            message:"Enter a valid PhoneNumber or Password"
+            message:"Enter PhoneNumber and Password"
         })
         return
     }
     const user = await User.findOne({phoneNumber}).select("+password")
     if(!user){
         res.status(401).json({
-            message:'Invalid email or password'
+            message:'Invalid PhoneNumber or Password'
         })
         return
     }
     if(!await user.isValidPassword(password)){
        res.json({
-        message:'Invalid email or password'
+        message:'Invalid PhoneNumber or password'
        }) 
        return
     }

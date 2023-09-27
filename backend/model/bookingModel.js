@@ -6,7 +6,7 @@ let bookingSchema= new mongoose.Schema({
         type:String,
         required:true,
         minlength:2,
-        maxlength:15,
+        maxlength:20,
     },
      user: {
     type: mongoose.Schema.Types.ObjectId,

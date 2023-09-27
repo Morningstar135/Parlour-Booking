@@ -36,7 +36,6 @@ exports.NewBooking=async(req,res)=>{
     res.status(500).json({
         message:'Internal Server Error'
     })
-    console.error(err)
 }
 }
 exports.allBookings=async(req,res)=>{
@@ -56,7 +55,6 @@ exports.allBookings=async(req,res)=>{
         res.status(500).json({
             message:'Internal Server Error'
         })
-        console.error(err);
     }
 }
 exports.remainingTime =async(req,res)=>{
@@ -83,14 +81,13 @@ exports.remainingTime =async(req,res)=>{
     const remainingTime=showRemainingTime(date,time,phoneNumber,user) 
     res.status(200).json({
         message:'success',
-        remaingTime:remainingTime.remainingTime,
+        remainingTime,
         pin
     })
     }catch(err){
         res.status(500).json({
             message:'Internal Server Error'
         })
-        console.error(err)
     }
 }
 exports.availableTimes=async(req,res,next)=>{
@@ -104,7 +101,6 @@ try{
         availableTimes
     })
 }catch(err){
-    console.log(err);
     res.status(500).json({
         message:"Internal Server Error"
     })
@@ -136,32 +132,27 @@ exports.scheduleChange=async(req,res,next)=>{
         res.status(500).json({
             message:"Some Internal Server Error"
         })
-        console.log(err);
     }
 }
 exports.deleteBookings=async(req,res)=>{
     try{
-        console.log('entered the function')
-        const {id} =req.body  
+        const {id} = req.body
     const deletedBooking=await Booking.findByIdAndDelete(id)
-    console.log(deletedBooking)
    if(!deletedBooking){
-        console.log('deletedBooking Empty')
         res.status(404).json({
             message:"Booking Not Found"
         })
         return
     }
-    console.log('executed the function successful')
     res.status(200).json({ 
         message:"This Schedule Has Deleted Successfully",
         deletedBooking
         })
     }catch(err){
+        console.error(err)
         res.status(500).json({
             message:"Some Internal Server Error"
         })
-        console.log(err);
     }
 
 }
@@ -170,7 +161,6 @@ exports.showSpecificSchedules=async(req,res)=>{
     try{
     const {hairStylist,date} = req.body
     const specificSchedules = await Booking.find({hairStylist,date})
-    console.log(specificSchedules)
     if(!specificSchedules){
         res.status(404).json({
             message:"Sorry!..There are no Schedules for You"
@@ -184,7 +174,6 @@ exports.showSpecificSchedules=async(req,res)=>{
 
     })
 }catch(arr){
-    console.log(err);
     res.stats(500).json({
         message:"Internal Server Error"
     })
@@ -215,7 +204,6 @@ exports.cancelBooking=async(req,res,next)=>{
         res.status(500).json({
             message:"Some Internal Server Error"
         })
-        console.log(err);
     }
 
 }

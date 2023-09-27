@@ -9,6 +9,7 @@ const About = () => {
             <li> Tuesday: 8.00 AM to 9.00 PM</li>
             <li>Wednesday:8.00 AM to 9.00 PM</li>
             <li> Thursday:8.00 AM to 9.00 PM</li>
+            <li>Friday is a Holiday for us</li>
             <li>Saturday:8.00 AM to 9.00 PM</li>
             <li>Sunday: 8.00 AM to 9.00 PM</li>
         </ul>

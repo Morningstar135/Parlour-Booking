@@ -1,63 +1,21 @@
-import React,{useState} from 'react'
+import React,{useContext, useEffect} from 'react'
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { useNavigate } from 'react-router-dom';
-import {URL} from '../utils/baseURL'
-import Cookies from 'js-cookie'
 import Alert from '@mui/material/Alert';
-const Register = ({mobileNumInfo,passInfo,setToken}) => {
-    const [phoneNumber,setPhoneNumber] = useState('')
-    const [name,setName] = useState('')
-    const [message,setMessage] = useState("")
-    const navigate = useNavigate()
-    const [show,setShow] = useState(false)
-    const [sever,setSever]=useState(true)
-    const [wrongNum,setWrongNum] = useState(false)
-    const [wrongName,setWrongName] = useState(false)
-    const [password,setPassword] = useState('')
-    const [wrongPass,setWrongPass] = useState(false)
-    const handleRegisterSubmit =async(event)=>{
-        event.preventDefault()
-        const phoneNumberPattern = /^\d{10}$/
-        const passwordPattern =/^[a-zA-Z0-9@#$*]{6,10}$/
-        const namePattern = /^[A-Za-z\s'-]{4,}$/
-        if(! namePattern.test(name)){
-            setWrongName(true)
-        }
+import DataContext from '../context/DataContext';
+const Register = () => {
+    
+    const {mobileNumInfo,passInfo,message,wrongNum,setWrongNum,wrongName,setWrongName,
+        password,setPassword,
+        wrongPass,setWrongPass,
+        phoneNumber,setPhoneNumber,
+        name,setName,show,setShow,sever,setSever,setMessage,handleRegisterSubmit,navigate} = useContext(DataContext)
+        useEffect(()=>{
+            setShow(false)
+            setMessage('')
+            setSever(true)
+        },[setMessage, setSever, setShow])
 
-        if (! phoneNumberPattern.test(Number(phoneNumber))) {
-            setWrongNum(true)
-          } 
-          if (! passwordPattern.test(password)) {
-            setWrongPass(true)
-          } 
-        if(phoneNumberPattern.test(Number(phoneNumber)) && passwordPattern.test(password) && namePattern.test(name)){
-            var response=await URL.post(`/api/user/register`,{name,phoneNumber,password}).catch((err)=>{
-                if(err.response){
-                  setShow(true)
-                  setSever(false)
-                  setMessage(err.response.data.message)
-                }
-                else if(err.request){
-                  setShow(true)
-                  setSever(false)
-                  setMessage('Some Network Error Occured Refresh The Page And Try Again')
-                }
-              })
-            setShow(true)
-            const resObj=response.data
-              if(resObj){
-                console.log(resObj)
-                setMessage(resObj.message)
-                Cookies.set('token',resObj.token,{expires:30})
-                setToken(Cookies.get('token'))
-                    setSever(true)
-              }
-                 
-            
-            
-        }
-    }
     return (
         <div className='container-sm'>
         <div className='row'>
@@ -65,21 +23,32 @@ const Register = ({mobileNumInfo,passInfo,setToken}) => {
         <div className='card text-white' id='login'>
         <form className='container-sm mt-5 p-3 cardbody'>
             <h5 className="card-title text-center text-dark mb-2">Register</h5>
+            {
+                show?<div className='row mt-2 mb-3'>
+                <div className='col text-center'>
+                    <Alert severity={sever?"success":"error"} >{message}</Alert>
+                </div>
+            </div>:<div></div>
+            }
+            
             <div className='row mt-2 mb-3 text-center'>
                 <div className='col'>
-                    <TextField label="Name" fullWidth helperText={wrongName?"Name Cannot be Shorter than 4 characters":""} error={wrongName} variant="outlined" value={name} size="small" onChange={(e)=>{setName(e.target.value)
+                    <TextField label="Name" fullWidth helperText={wrongName?"Name Cannot include Special characters or be Shorter than 4 characters and it should be maximum of 20 charcters ":""} error={wrongName} variant="outlined" value={name} size="small" onChange={(e)=>{setName(e.target.value)
+                    setShow(false)
                     setWrongName(false)}} />
                 </div>
             </div>
             <div className='row mt-3 mb-3 text-center'>
                 <div className='col'>
                     <TextField error={wrongNum} fullWidth helperText={wrongNum?mobileNumInfo:"Don't use Mobile Number That is Already Registered"} label="Phone Number" variant="outlined" size="small" value={phoneNumber} onChange={(e)=>{setPhoneNumber(e.target.value)
+                    setShow(false)
                     setWrongNum(false)}}/>
                 </div>
             </div >
             <div className='row mt-2 mb-3 text-center'>
                 <div className='col'>
                     <TextField label="Password"fullWidth helperText={wrongPass?passInfo:""} error={wrongPass} variant="outlined" value={password} size="small" onChange={(e)=>{setPassword(e.target.value)
+                    setShow(false)
                     setWrongPass(false)}} />
                 </div>
             </div>
@@ -96,15 +65,6 @@ const Register = ({mobileNumInfo,passInfo,setToken}) => {
                     }}  >Login</Button>
                 </div>
             </div>
-            
-            {
-                show?<div className='row mt-2 mb-3'>
-                <div className='col text-center'>
-                    <Alert severity={sever?"success":"error"} >{message}</Alert>
-                </div>
-            </div>:<div></div>
-            }
-            
 
 
 
