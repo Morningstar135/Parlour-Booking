@@ -1,0 +1,21 @@
+#alert-3{
+    width: 500px;
+    margin-bottom: 50px;
+}
+#card-rmt{
+    background-color: rgba(255, 255, 255, 0.658);
+    border-radius: 30px;
+}
+#span-rmt{
+    background-color: #163A59;
+    color:#b8dcfc;
+    border-radius: 3px;
+    padding: 3px 5px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+#span-rmt:hover{
+    background-color:black;
+    color: white;
+    transition: all .2s;
+}

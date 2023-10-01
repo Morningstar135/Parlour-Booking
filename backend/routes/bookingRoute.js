@@ -11,7 +11,8 @@ const {
     cancelBooking,
     getHairStylistArray,
     addHairStylistInArray,
-    remainingTime
+    remainingTime,
+    getBooking
 } = require('../controller/bookingController')
 const {
     authenticateUser,
@@ -59,6 +60,7 @@ router.route('/show/remaining/time').get(
         })
     }
 )
+router.route ('/get/booking/:token').get(authenticateUser,getBooking)
 router.route('/get/hairstylists').get(getHairStylistArray)
 
 //Admin Routes

@@ -1,10 +1,9 @@
 const { sendMessage } = require("./sendMessage")
 const Booking = require('../model/bookingModel')
 
-const idNum=0
 const hairStylists =[
-  "Karthick Kumar",
-  "Santhosh Kumar"
+  {name:"Karthick Kumar",id:1},
+  {name:"Santhosh Kumar",id:2}
 ]
 function getHairStylists(){
   return hairStylists

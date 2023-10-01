@@ -2,19 +2,39 @@ import React,{useContext, useEffect} from 'react';
 import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import DataContext from '../context/DataContext';
+import '../styles/booking.css'
+import { URL } from '../utils/baseURL';
 const Booking = () => {
     
    const {onDateFocus,onDateChange,onHStFocus,onHStChange,onTimeFocus,handleBookingSubmit,formattedDates,navigate,
-    hairStylists,showHS,setTime,timings,show,sever,message,setShow,setMessage,setSever
+    hairStylists,showHS,setTime,timings,show,sever,message,setShow,setMessage,setSever,token,setVal2,val2,reqServer
 } = useContext(DataContext)
 useEffect(()=>{
-    setShow(false)
-    setMessage('')
-    setSever(true)
-},[setMessage, setSever, setShow])
+    const options2 ={
+        method: URL.get,
+        url: `/api/user/book/get/booking/${token}`,
+        data:null,
+        func: (response) => {
+            console.log(response)
+          setVal2(response.data.value)
+          reqServer(options2)
+          if(response.data.value){
+           console.log(val2)
+             navigate('/remainingtime')
+         }
+         else if(response.data.value){
+           navigate('/booking')
+         }
+        } 
+      }
+      reqServer(options2)
+     
+},[])
+
 
   return (
-    <div className='container-sm'>
+    
+    <div className='container-sm mt-5'>
     <div className='row'>
     <div className='col-lg-6 mx-auto'>
     <div className='card text-white' id='login'>
@@ -42,10 +62,10 @@ useEffect(()=>{
                         {
                             formattedDates.map((date)=>{
                                 if(date.day==='Friday'){
-                                    return(<option disabled value={date.date} key={date.date}>{date.date}</option>)
+                                    return(<option disabled value={date.date} key={date.date}>{date.day}</option>)
                                     
                                 }else{
-                                    return(<option value={date.date} key={date.date}>{date.date}</option>)
+                                    return(<option value={date.date} key={date.date}>{date.day}</option>)
                                 }
                                 
 })
@@ -59,7 +79,7 @@ useEffect(()=>{
                         <option defaultValue={''} >Select Your HairStylist</option>
                         {
                             hairStylists.map((stylist)=>(
-                                <option value={stylist} key={stylist}>{stylist}</option>
+                                <option value={stylist.name} key={stylist.id}>{stylist.name}</option>
                             ))
                         }
                     </select>

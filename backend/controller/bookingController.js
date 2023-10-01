@@ -134,6 +134,28 @@ exports.scheduleChange=async(req,res,next)=>{
         })
     }
 }
+exports.getBooking =async(req,res)=>{
+    try{
+        const user = req.user.id
+        console.log(user)
+        const booking =await Booking.findOne({user})
+        console.log(booking)
+        if(!booking){
+            res.status(200).json({
+                value:false
+            })
+            return
+        }
+        res.status(200).json({ 
+            value:true
+            })
+    }catch(err){
+        res.status(500).json({
+            message:"Some Internal Server Error"
+        })
+        console.error(err)
+    }
+}
 exports.deleteBookings=async(req,res)=>{
     try{
         const {id} = req.body

@@ -1,0 +1,128 @@
+ #cards{
+  margin: 0;
+  padding: 0;
+ }
+ .card2 {  
+    position: relative;  
+    width: 300px;  
+    height: 400px;  
+    background: #333131;  
+    border-radius: 20px;  
+    overflow: hidden;  
+  }  
+   .card2:after {  
+    content: "Lycon";  
+    position: absolute;  
+    top: 20%;  
+    transform: rotate(-45deg);
+    left: -20%;  
+    font-size: 10em;  
+    font-weight: 600;
+    font-style: italic;  
+    color: rgba(160, 158, 158, 0.329);  
+  }  
+  .card2 .imgBx {  
+    position: absolute;  
+    top: 50%;  
+    transform: translateY(-50%);  
+    z-index: 1000;  
+    width: 100%;  
+    height: 100%;  
+    transition: .5s;  
+  }  
+  .card2:hover .imgBx {  
+    top: 0%;  
+    transform: translateY(-25%);   
+  }  
+ .card2 .imgBx img {  
+    position: absolute;  
+    top: 50%;  
+    left: 50%;  
+    transform: translate(-50%, -50%) ;  
+    width: 270px;  
+    border-radius: 10px;
+  }  
+  .card2 .contentBx {  
+    position: absolute;  
+    bottom: 0;  
+    width: 100%;  
+    height: 100px;  
+    text-align: center;  
+    transition: 1s;  
+    z-index: 90;  
+  }  
+ .card2:hover .contentBx {  
+    height: 210px;  
+  }  
+  .card2 .contentBx h2 {  
+    position: relative;  
+    font-weight: 600;  
+    letter-spacing: 1px;  
+    color: #fff;  
+  }  
+   .card2 .contentBx .cntnt{  
+    display: flex;  
+    justify-content: center;  
+    align-items: center;  
+    padding: 8px 20px;  
+    transition: .5s;  
+    opacity: 0;  
+    visibility: hidden;  
+  }  
+   .card2:hover .contentBx .cntnt {  
+    opacity: 1;  
+    visibility: visible;  
+    transition-delay: .5s;  
+  }    
+ .card2 .contentBx .cntnt h3,  
+   .card2 .contentBx .color h3 {  
+    color: white;  
+    font-weight: 300;  
+    font-size: 14px;  
+    text-transform: uppercase;  
+    letter-spacing: 2px;  
+    margin-right: 10px;  
+  }  
+ .card2 .contentBx a {  
+    display: inline-block;  
+    padding: 10px 20px;  
+    background: black;  
+    border-radius: 4px;  
+    margin-top: 10px;  
+    text-decoration: none;  
+    font-weight: 600;  
+    color: white;  
+    opacity: 0;  
+    transform: translateY(50px);  
+    transition: .5s;  
+  }  
+ .card2:hover .contentBx a {  
+    opacity: 1;  
+    transform: translateY(0px);  
+      
+  }   
+  .card2 .contentBx a:hover{
+    color: black;
+    background-color:white ;
+    transition: .3s;
+  }
+  #carouselitem{
+    background:rgba(225, 231, 236, 0.788);
+    padding: 30px 10px 20px;
+    border-radius: 20px;
+    margin-top:100px;
+    font-family: 'Times New Roman', Times, serif;
+    color: #0662ec;
+  }
+  #carousel{
+    width: 100%;
+  }
+  @media screen and (max-width: 500px){
+    #cards{
+      padding-left:10%;
+    }
+    #card3{
+      padding-right: 10%;
+    }
+
+  }

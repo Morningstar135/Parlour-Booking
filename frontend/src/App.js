@@ -1,5 +1,5 @@
 import Footer from "./components/Footer"
-import React, { useContext, useEffect} from 'react';
+import React, { useState } from 'react';
 import { Routes, Route } from "react-router-dom";
 import NavBar from './components/NavBar';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -11,13 +11,13 @@ import Register from "./components/Register";
 import Booking from "./components/Booking";
 import RemaingTime from "./components/RemaingTime";
 import About from './components/About';
-import DataContext, { DataProvider } from "./context/DataContext";
+import  { DataProvider } from "./context/DataContext";
 function App() {
+  const [showMenu,setShowMenu] = useState(false)
   return (
-    
     <div>
       <DataProvider>
-      <NavBar />
+      <NavBar showMenu={showMenu} setShowMenu={setShowMenu} />
     <div className='container-md'>
       <Routes>
       <Route path="/" element={<Home />} />
@@ -29,8 +29,8 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="*" element={<NoPage />} />
       </Routes>
-      <Footer />
     </div>
+    <Footer />
     </DataProvider>
     </div>
    

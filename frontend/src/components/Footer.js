@@ -1,27 +1,51 @@
 import React from "react";
-import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
+import "../styles/footer.css"
 const Footer = () => {
     const navigate = useNavigate()
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     return(
-    <div className="">
-        <footer>
-        <h1 className="fs-4">Lycon Hair Saloon</h1>
-        <h3 className="fs-5">Contact Us:</h3>
-        <address className="fs-6">
-            [Salon Address]
-            [City, State, Zip Code]
-            Phone: [Salon Phone Number]
-            Email: [Salon Email]
-        </address>
-        <h3>Discover More  <Button variant="text"  onClick={()=>navigate('/about')} >About Us</Button></h3>
-       <h4 className="fs-6"> © {currentYear} Lycon Saloon</h4>
+    
+        <footer id="footer" className="mt-5">
+        <div className="row">
+            <div  className="col-lg-3 col-sm-12">
+                <div className="footersec">
+                <h2>Lycon Hair Saloon</h2>
+                Dicover more <Button   onClick={()=>navigate('/about')} >About Us</Button>
+                </div>
+            </div>
+            <div className="col-lg-3 col-sm-12">
+                <div className="footersec">
+                <h2>Contact Us</h2>
+                <address>
+                    
+                        [Salon Address]
+                        City
+                        State
+                        Phone: [Salon Phone Number]
+                        Email: [Salon Email]
+
+                </address>
+                </div>
+            </div>
+            <div className="col-lg-3 col-sm-12 mx-auto">
+                <h5>© {currentYear} Lycon Saloon</h5>
+            </div>
+            <div className="col-lg-3 col-sm-12">
+                <div className="footersec" >
+                <h2>Follow Us</h2>
+                <ul>
+                    <li>Instagram</li>
+                    <li>Facebook</li>
+                </ul>
+                </div>
+            </div>
+       </div>
        </footer>
 
 
-    </div>
     )
 }
 

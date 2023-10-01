@@ -1,0 +1,25 @@
+*{
+    margin: 0;
+}
+#footer{
+
+    margin-left: 0;
+    padding: 1rem 1rem;
+    background-color:  #163A59;
+    color: white;
+    display: flex;  
+    flex: column;
+}
+.about-btn{
+    padding: 5px;
+    background-color:rgb(3, 108, 150);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .2s linear;
+}
+.about-btn:hover{
+    background-color:white;
+    color: rgb(3, 108, 150);
+}
+

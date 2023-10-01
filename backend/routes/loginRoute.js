@@ -7,7 +7,8 @@ const {
     forgotPassword,
     makeAdmin 
     } = require('../controller/authcontroller')
-const { authenticateUser } = require('../middlewares/authenticateUser')
+const { authenticateUser, authorizeUser } = require('../middlewares/authenticateUser')
+const { createDetails, updateDetails, getDetails } = require('../controller/detailsController')
 const router= express.Router()
 
 router.route('/register').post(userRegister)
@@ -22,7 +23,9 @@ router.route('/register/:pass').post(
     authenticateUser,
     makeAdmin
     )
-
+router.route('/create/details/:token').post(authenticateUser,authorizeUser('admin'),createDetails)
+router.route('/update/details/:token').patch(authenticateUser,authorizeUser('admin'),updateDetails)
+router.route('/get/details/:token').get(authenticateUser,authorizeUser('admin'),getDetails)
 module.exports = router
 
 

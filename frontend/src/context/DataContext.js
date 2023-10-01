@@ -6,6 +6,7 @@ import {URL} from '../utils/baseURL'
 const DataContext = createContext({})
 
 export const DataProvider = ({children}) => {
+  const [role,setRole] =useState('')
   const [token,setToken]=useState(Cookies.get('token'))
   const [name,setName] = useState('')
   const [phoneNumber,setPhoneNumber] = useState('')
@@ -15,6 +16,7 @@ export const DataProvider = ({children}) => {
   const [wrongName,setWrongName] = useState(false)
   const [showFPInfo,setShowFPInfo] = useState(false)
     const [showSucInfo,setShowSucInfo] = useState(false)
+    const [val2,setVal2] =useState(false)
   const [show,setShow] = useState(false)
   const [sever,setSever]=useState(true)
   const [message,setMessage]=useState('')
@@ -23,8 +25,8 @@ export const DataProvider = ({children}) => {
   const [canceledId,setCanceledId]=useState('')
   const [timeChangeId,setTimeChangeId]=useState('')
   var [hairStylist,setHairStylist]=useState('')
-  var [hairStylists,setHairStylists]=useState(["stylist1",'stylist2'])
-  var [formattedDates,setFormattedDates]=useState(['today','tomorrow','Day After tomorrow'])
+  var [hairStylists,setHairStylists]=useState([{name:"stylist1",id:1},{name:'stylist 2',id:2},])
+  var [formattedDates,setFormattedDates]=useState([{day:'today',date:"0/0/0000"},{day:'tomorrow',date:"01/00/00000"},{day:'Day After tomorrow',date:"02/00/0000"}])
   const [time,setTime] = useState('')
     const [showHS,setShowHS] = useState(false)
     const [dateVal,setDateVal] = useState('')
@@ -32,6 +34,15 @@ export const DataProvider = ({children}) => {
 
   const navigate = useNavigate()
   const loginToken =Cookies.get('token')
+  useEffect(()=>{
+    setRole(Cookies.get('role'))
+      console.log(token,"role:",role)
+    if(token && role==='admin'){
+      navigate('/adminpanel')
+    }else if (token && role==='user'){
+      navigate('/booking')
+    }
+  },[role,token])
   useEffect(()=>{
     if(loginToken){
       setToken(loginToken)
@@ -127,6 +138,7 @@ handleDelete(canceledId)
 }
 console.log(options.data)
 reqServer(options)
+handleSBClick()
 
 }
 const getAll =()=>{
@@ -241,13 +253,13 @@ const handleBookingSubmit =async(e)=>{
                 setMessage(resObj.message)
                 setShow(true)
                 Cookies.set('token',resObj.token,{expires:30})
+                Cookies.set('role',resObj.user.role,{expires:30})
                 setToken(Cookies.get('token'))
-                if(resObj.user.role==='admin'){
-                    navigate('/adminpanel')
-                }
-                else{
-                    navigate('/booking')
-                }
+                if(role==='admin'){
+                  navigate('/adminpanel')
+              }else{
+                navigate('/booking')
+              }
             }
         }
         reqServer(options)
@@ -356,7 +368,7 @@ reqServer(options)
       formattedDates,setFormattedDates,
       today,tomorrow,dayAfter,getDate,columns,onHSFocus,onHSChange,handleSBClick,handleChangeTime,handleDelete,getAll,
       onDateFocus,onDateChange,onHStFocus,onHStChange,onTimeFocus,handleBookingSubmit,setTime,showHS,timings,handleLoginSubmit,handleForgotPass,
-      handleRegisterSubmit,handleCancel,showFPInfo,showSucInfo,loginToken
+      handleRegisterSubmit,handleCancel,showFPInfo,showSucInfo,loginToken,setVal2,val2
       } }>
         {children}
     </DataContext.Provider>

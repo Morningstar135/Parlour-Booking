@@ -1,16 +1,24 @@
+*{
+  font-family: 'Times New Roman', Times, serif;
+}
 body{
-  background-color: gray;
-  color:white;
+  background-image: url('../public/wallpaperflare.com_wallpaper.jpg');
+  background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+      margin: 0; 
+      padding: 0;
+  color:blue;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family:roboto ;
 }
+
 #login{
    background-color: rgba(245, 245, 245, 0.685);
 }
-#navbar{
-  background-color: black;
-}
+
 #dateselect{
   height: fit-content;
   overflow-y: scroll;

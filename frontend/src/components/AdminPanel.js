@@ -9,8 +9,8 @@ import TableRow from '@mui/material/TableRow';
 import { Button,Alert } from '@mui/material'
 import DataContext from '../context/DataContext';
 const AdminPanel = () => {
-  const   {message,show,sever,data,columns,setDate,setFormattedDates,getDate,today,tomorrow,dayAfter,onHSChange,onHSFocus,handleSBClick,hairStylists,formattedDates,
-    handleChangeTime,handleDelete,getAll,setCanceledId,setShow,setSever,setMessage
+  const   {data,columns,setDate,setFormattedDates,getDate,today,tomorrow,dayAfter,onHSChange,onHSFocus,handleSBClick,hairStylists,formattedDates,
+    handleChangeTime,handleDelete,getAll,setCanceledId,setShow,setSever,setMessage,message,show,sever
   } = useContext(DataContext)
 
   useEffect(()=>{
@@ -19,7 +19,7 @@ const AdminPanel = () => {
     setSever(true)
 },[setMessage, setSever, setShow])
   return (
-    <main className='container-sm'>
+    <main className='container-sm mt-5'>
       <div className='row'>
           <div className='col'>
           <select className="form-select form-select-lg mb-3" onChange={(e)=>setDate(e.target.value)} onFocus={()=>setFormattedDates([getDate(today),getDate(tomorrow),getDate(dayAfter)])}>
@@ -40,7 +40,7 @@ const AdminPanel = () => {
                         <option defaultValue={''} >Select Your Name</option>
                         {
                             hairStylists.map((stylist)=>(
-                                <option value={stylist} key={stylist}>{stylist}</option>
+                                <option value={stylist.name} key={stylist.id}>{stylist.name}</option>
                             ))
                         }
                     </select>
@@ -95,9 +95,9 @@ const AdminPanel = () => {
                         {user.pin}
                         </TableCell>
                         <TableCell  >
-                        <Button variant="contained"  onClick={()=>{handleDelete(user._id)}}>Delete</Button>
-                        <Button variant="contained"  onClick={()=>{setCanceledId(user._id)}}>Change</Button>
-                        <Button variant="contained"  onClick={()=>{handleChangeTime(user._id)}}>Set</Button>
+                        <Button variant="contained"  onClick={()=>{handleDelete(user._id)}}>Delete</Button><br></br>
+                        <Button variant="contained"  onClick={()=>{setCanceledId(user._id)}}>Change</Button><br></br>
+                        <Button variant="contained"  onClick={()=>{handleChangeTime(user._id)}}>Set</Button><br></br>
                   </TableCell>
                       
                       
@@ -109,7 +109,7 @@ const AdminPanel = () => {
       </TableContainer>
       </Paper> 
       <div className='row mt-2 mb-3'>
-            <div className='col text-center'>
+            <div className='col text-center ms-3'>
                 <Button variant="contained" onClick={getAll} >AllBookings</Button>
             </div>
         </div>

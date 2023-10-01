@@ -13,7 +13,7 @@ useEffect(()=>{
     setSever(true)
 },[setMessage, setSever, setShow])
     return (
-        <div className='container-sm'>
+        <div className='container-sm mt-5'>
         <div className='row'>
         <div className='col-lg-6 mx-auto'>
         <div className='card text-white' id='login'>
@@ -74,7 +74,6 @@ useEffect(()=>{
 
 
         </form>
-        {message}
         </div>
         </div>
         </div>

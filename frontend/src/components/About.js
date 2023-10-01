@@ -2,18 +2,28 @@ import React from 'react'
 
 const About = () => {
   return (
-    <div>
+    <section>
+    <div className='container'>
+      <div className="row">
+        <div className='col'>
         <h3 className="fs-5">Hours of Operation</h3>
-        <ul className="fs-6">
-            <li>Monday:8.00 AM to 9.00 PM</li>
-            <li> Tuesday: 8.00 AM to 9.00 PM</li>
-            <li>Wednesday:8.00 AM to 9.00 PM</li>
-            <li> Thursday:8.00 AM to 9.00 PM</li>
-            <li>Friday is a Holiday for us</li>
-            <li>Saturday:8.00 AM to 9.00 PM</li>
-            <li>Sunday: 8.00 AM to 9.00 PM</li>
-        </ul>
+        </div>
+      </div>
+      <div className="row">
+        <div className='col'>
+          <p>
+            Monday:8.00 AM to 9.00 PM    <br></br>
+             Tuesday: 8.00 AM to 9.00 PM<br></br>
+            Wednesday:8.00 AM to 9.00 PM<br></br>
+             Thursday:8.00 AM to 9.00 PM<br></br>
+            Friday is a Holiday for us<br></br>
+            Saturday:8.00 AM to 9.00 PM<br></br>
+            Sunday: 8.00 AM to 9.00 PM<br></br>
+          </p>
+        </div>
+      </div>
     </div>
+    </section>
   )
 }
 
